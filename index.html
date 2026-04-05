@@ -6,7 +6,6 @@
   <title>LeadForge AI — Find Clients on Autopilot</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
   <script>
@@ -125,7 +124,6 @@ body { height: 100%; margin: 0; }
 }
 </style>
   <style>body { box-sizing: border-box; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full overflow-auto bg-[#090a0f] text-white font-sans"><!-- NAV -->
   <nav class="nav-blur fixed top-0 left-0 w-full z-50 px-6 py-4">
@@ -642,38 +640,8 @@ async function onConfigChange(config) {
   lucide.createIcons();
 }
 
-function mapToCapabilities(config) {
-  const c = config;
-  function mut(key) {
-    return {
-      get: () => c[key] || defaultConfig[key],
-      set: (v) => { c[key] = v; window.elementSdk.setConfig({ [key]: v }); }
-    };
-  }
-  return {
-    recolorables: [mut('background_color'), mut('surface_color'), mut('text_color'), mut('primary_action_color'), mut('secondary_action_color')],
-    borderables: [],
-    fontEditable: mut('font_family'),
-    fontSizeable: mut('font_size')
-  };
-}
-
-function mapToEditPanelValues(config) {
-  const c = config;
-  return new Map([
-    ['hero_headline', c.hero_headline || defaultConfig.hero_headline],
-    ['hero_subheadline', c.hero_subheadline || defaultConfig.hero_subheadline],
-    ['cta_primary', c.cta_primary || defaultConfig.cta_primary],
-    ['cta_secondary', c.cta_secondary || defaultConfig.cta_secondary],
-    ['starter_price', c.starter_price || defaultConfig.starter_price],
-    ['pro_price', c.pro_price || defaultConfig.pro_price],
-    ['agency_price', c.agency_price || defaultConfig.agency_price],
-    ['final_cta_text', c.final_cta_text || defaultConfig.final_cta_text]
-  ]);
-}
-
-// Init SDK
-window.elementSdk.init({ defaultConfig, onConfigChange, mapToCapabilities, mapToEditPanelValues });
+// Init page styling
+onConfigChange(defaultConfig);
 
 // Scroll reveal
 const observer = new IntersectionObserver((entries) => {
@@ -691,5 +659,5 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
 lucide.createIcons();
 </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e787e54f45121f2',t:'MTc3NTM5MTQ4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ </body>
 </html>
