@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeadForge AI — Find Clients on Autopilot</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Instrument Sans', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace']
+      }
+    }
+  }
+}
+</script>
+  <style>
+html { height: 100%; }
+body { height: 100%; margin: 0; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(99, 225, 190, 0.15); }
+  50% { box-shadow: 0 0 40px rgba(99, 225, 190, 0.3); }
+}
+
+.fade-up { animation: fadeUp 0.7s ease both; }
+.fade-up-d1 { animation: fadeUp 0.7s 0.1s ease both; }
+.fade-up-d2 { animation: fadeUp 0.7s 0.2s ease both; }
+.fade-up-d3 { animation: fadeUp 0.7s 0.3s ease both; }
+.fade-up-d4 { animation: fadeUp 0.7s 0.4s ease both; }
+.fade-in { animation: fadeIn 0.8s ease both; }
+.float-anim { animation: float 4s ease-in-out infinite; }
+.pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+.glass {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.glass-light {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #63e1be, #3b82f6, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #10b981, #059669);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(16,185,129,0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(16,185,129,0.4);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: all 0.3s ease;
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.25);
+}
+
+.feature-card {
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99,225,190,0.3);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+
+.scroll-reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s ease; }
+.scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+
+.logo-scroll { display: flex; gap: 3rem; animation: scroll-logos 20s linear infinite; }
+@keyframes scroll-logos {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.pricing-popular { border: 2px solid #10b981; position: relative; }
+.pricing-card { transition: all 0.3s ease; }
+.pricing-card:hover { transform: translateY(-4px); }
+
+.table-row { transition: background 0.2s ease; }
+.table-row:hover { background: rgba(99,225,190,0.05); }
+
+.nav-blur {
+  background: rgba(9,10,15,0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto bg-[#090a0f] text-white font-sans"><!-- NAV -->
+  <nav class="nav-blur fixed top-0 left-0 w-full z-50 px-6 py-4">
+   <div class="max-w-6xl mx-auto flex items-center justify-between">
+    <div class="flex items-center gap-2">
+     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-white"></i>
+     </div><span class="font-bold text-lg tracking-tight">LeadForge AI</span>
+    </div>
+    <div class="hidden md:flex items-center gap-8 text-sm text-gray-400"><a href="#features" class="hover:text-white transition">Features</a> <a href="#pricing" class="hover:text-white transition">Pricing</a> <a href="#demo" class="hover:text-white transition">Demo</a>
+    </div><button id="nav-cta" class="btn-primary text-sm font-semibold px-5 py-2.5 rounded-full text-white">Start Free Trial</button>
+   </div>
+  </nav><!-- HERO -->
+  <section class="relative w-full pt-32 pb-20 px-6 overflow-hidden">
+   <div class="absolute inset-0 overflow-hidden">
+    <div class="absolute top-20 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+    <div class="absolute top-40 right-1/4 w-80 h-80 bg-blue-500/8 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent"></div>
+   </div>
+   <div class="max-w-6xl mx-auto relative z-10">
+    <div class="text-center max-w-3xl mx-auto">
+     <div class="fade-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-xs text-emerald-400 font-medium mb-8"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Trusted by 2,400+ agencies worldwide
+     </div>
+     <h1 id="hero-headline" class="fade-up-d1 text-5xl md:text-7xl font-bold tracking-tight leading-[1.08] mb-6">Stop hunting for clients.<br><span class="gradient-text">Let AI find them.</span></h1>
+     <p id="hero-subheadline" class="fade-up-d2 text-lg md:text-xl text-gray-400 max-w-xl mx-auto mb-10 leading-relaxed">LeadForge scrapes real-time business data, filters by niche and location, and delivers verified leads straight to your dashboard.</p>
+     <div class="fade-up-d3 flex flex-col sm:flex-row items-center justify-center gap-4"><button id="hero-cta-primary" class="btn-primary px-8 py-3.5 rounded-full text-white font-semibold text-base">Start Finding Leads</button> <button id="hero-cta-secondary" class="btn-secondary px-8 py-3.5 rounded-full text-gray-300 font-medium text-base flex items-center gap-2"> <i data-lucide="play" class="w-4 h-4"></i> View Sample Leads </button>
+     </div>
+    </div><!-- Dashboard Mockup -->
+    <div class="fade-up-d4 mt-16 max-w-4xl mx-auto">
+     <div class="glass rounded-2xl p-1 pulse-glow">
+      <div class="bg-[#0d0f16] rounded-xl overflow-hidden">
+       <div class="flex items-center gap-2 px-5 py-3 border-b border-white/5">
+        <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
+        <div class="w-3 h-3 rounded-full bg-green-500/60"></div><span class="ml-3 text-xs text-gray-500 font-mono">leadforge.ai/dashboard</span>
+       </div>
+       <div class="p-5">
+        <div class="flex items-center justify-between mb-4">
+         <div>
+          <h3 class="text-sm font-semibold text-white">Recent Leads</h3>
+          <p class="text-xs text-gray-500">247 new leads this week</p>
+         </div>
+         <div class="flex items-center gap-2"><span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium">Live</span> <button class="px-3 py-1 rounded-lg bg-white/5 text-gray-400 text-xs flex items-center gap-1"><i data-lucide="download" class="w-3 h-3"></i> Export</button>
+         </div>
+        </div>
+        <div class="overflow-x-auto">
+         <table class="w-full text-sm">
+          <thead>
+           <tr class="text-left text-gray-500 text-xs uppercase tracking-wider border-b border-white/5">
+            <th class="pb-3 pr-4 font-medium">Business</th>
+            <th class="pb-3 pr-4 font-medium">Email</th>
+            <th class="pb-3 pr-4 font-medium">Country</th>
+            <th class="pb-3 pr-4 font-medium">Industry</th>
+            <th class="pb-3 font-medium">Score</th>
+           </tr>
+          </thead>
+          <tbody class="text-gray-300">
+           <tr class="table-row border-b border-white/[0.03]">
+            <td class="py-3 pr-4 font-medium text-white">Pixel &amp; Grain Studio</td>
+            <td class="py-3 pr-4 font-mono text-xs text-gray-400">hello@pixelgrain.co</td>
+            <td class="py-3 pr-4"><span class="inline-flex items-center gap-1">🇺🇸 USA</span></td>
+            <td class="py-3 pr-4"><span class="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-xs">Design Agency</span></td>
+            <td class="py-3"><span class="text-emerald-400 font-semibold">94</span></td>
+           </tr>
+           <tr class="table-row border-b border-white/[0.03]">
+            <td class="py-3 pr-4 font-medium text-white">Northflow Digital</td>
+            <td class="py-3 pr-4 font-mono text-xs text-gray-400">team@northflow.io</td>
+            <td class="py-3 pr-4"><span class="inline-flex items-center gap-1">🇬🇧 UK</span></td>
+            <td class="py-3 pr-4"><span class="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 text-xs">Marketing</span></td>
+            <td class="py-3"><span class="text-emerald-400 font-semibold">91</span></td>
+           </tr>
+           <tr class="table-row border-b border-white/[0.03]">
+            <td class="py-3 pr-4 font-medium text-white">Kairo Webworks</td>
+            <td class="py-3 pr-4 font-mono text-xs text-gray-400">info@kairo.dev</td>
+            <td class="py-3 pr-4"><span class="inline-flex items-center gap-1">🇩🇪 Germany</span></td>
+            <td class="py-3 pr-4"><span class="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-xs">Web Dev</span></td>
+            <td class="py-3"><span class="text-emerald-400 font-semibold">88</span></td>
+           </tr>
+           <tr class="table-row">
+            <td class="py-3 pr-4 font-medium text-white">Solaris Ventures</td>
+            <td class="py-3 pr-4 font-mono text-xs text-gray-400">contact@solaris.vc</td>
+            <td class="py-3 pr-4"><span class="inline-flex items-center gap-1">🇨🇦 Canada</span></td>
+            <td class="py-3 pr-4"><span class="px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 text-xs">Startup</span></td>
+            <td class="py-3"><span class="text-emerald-400 font-semibold">85</span></td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </section><!-- SOCIAL PROOF -->
+  <section class="w-full py-16 px-6 border-t border-white/5">
+   <div class="max-w-6xl mx-auto">
+    <p class="text-center text-xs uppercase tracking-widest text-gray-500 mb-10">Powering growth for ambitious teams</p>
+    <div class="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-40"><span class="text-xl font-bold tracking-tight">Arctik Digital</span> <span class="text-xl font-bold tracking-tight">Monolith Labs</span> <span class="text-xl font-bold tracking-tight">Fineway</span> <span class="text-xl font-bold tracking-tight">Novexa</span> <span class="text-xl font-bold tracking-tight">BrightPath</span> <span class="text-xl font-bold tracking-tight">Crestline Co.</span>
+    </div>
+   </div>
+  </section><!-- TESTIMONIALS -->
+  <section class="w-full py-16 px-6">
+   <div class="max-w-6xl mx-auto scroll-reveal">
+    <div class="grid md:grid-cols-3 gap-6">
+     <div class="glass rounded-2xl p-6">
+      <div class="flex items-center gap-1 mb-4 text-amber-400">
+       <i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i>
+      </div>
+      <p class="text-gray-300 text-sm leading-relaxed mb-5">"We went from spending 10 hours a week on lead research to closing 3 new clients in the first month. LeadForge basically paid for itself on day one."</p>
+      <div class="flex items-center gap-3">
+       <div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center text-xs font-bold">
+        JR
+       </div>
+       <div>
+        <p class="text-sm font-semibold">Jake Reeves</p>
+        <p class="text-xs text-gray-500">Founder, Arctik Digital</p>
+       </div>
+      </div>
+     </div>
+     <div class="glass rounded-2xl p-6">
+      <div class="flex items-center gap-1 mb-4 text-amber-400">
+       <i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i>
+      </div>
+      <p class="text-gray-300 text-sm leading-relaxed mb-5">"The lead quality is insane. Every export I pull has 80%+ valid emails. I've tried five other tools — nothing comes close to this accuracy."</p>
+      <div class="flex items-center gap-3">
+       <div class="w-9 h-9 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-xs font-bold">
+        SL
+       </div>
+       <div>
+        <p class="text-sm font-semibold">Sara Lin</p>
+        <p class="text-xs text-gray-500">Freelance Web Developer</p>
+       </div>
+      </div>
+     </div>
+     <div class="glass rounded-2xl p-6">
+      <div class="flex items-center gap-1 mb-4 text-amber-400">
+       <i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i>
+      </div>
+      <p class="text-gray-300 text-sm leading-relaxed mb-5">"We use LeadForge for every new market we enter. Set the filters, hit scrape, and have a warm list ready in minutes. Game-changer for our agency."</p>
+      <div class="flex items-center gap-3">
+       <div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-red-500 flex items-center justify-center text-xs font-bold">
+        MK
+       </div>
+       <div>
+        <p class="text-sm font-semibold">Marcus Klein</p>
+        <p class="text-xs text-gray-500">COO, Monolith Labs</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </section><!-- PROBLEM -->
+  <section class="w-full py-24 px-6 relative">
+   <div class="absolute inset-0 bg-gradient-to-b from-transparent via-red-500/[0.02] to-transparent"></div>
+   <div class="max-w-4xl mx-auto relative z-10 scroll-reveal">
+    <p class="text-center text-xs uppercase tracking-widest text-gray-500 mb-4">The problem</p>
+    <h2 class="text-3xl md:text-5xl font-bold text-center mb-16 tracking-tight">Finding clients shouldn't<br>
+     feel like a <span class="text-red-400">full-time job</span></h2>
+    <div class="grid md:grid-cols-3 gap-8">
+     <div class="text-center">
+      <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-red-500/10 flex items-center justify-center">
+       <i data-lucide="clock" class="w-6 h-6 text-red-400"></i>
+      </div>
+      <h3 class="font-semibold mb-2">Hours of manual research</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">You spend entire mornings Googling businesses, copying emails, and building spreadsheets that go stale within a week.</p>
+     </div>
+     <div class="text-center">
+      <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-red-500/10 flex items-center justify-center">
+       <i data-lucide="mail-x" class="w-6 h-6 text-red-400"></i>
+      </div>
+      <h3 class="font-semibold mb-2">Cold outreach that flops</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">Generic emails to unverified contacts get ignored. Low open rates kill your pipeline before it even starts.</p>
+     </div>
+     <div class="text-center">
+      <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-red-500/10 flex items-center justify-center">
+       <i data-lucide="alert-triangle" class="w-6 h-6 text-red-400"></i>
+      </div>
+      <h3 class="font-semibold mb-2">Outdated, irrelevant leads</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">Bought lead lists are full of dead emails, wrong contacts, and businesses that aren't even relevant to your services.</p>
+     </div>
+    </div>
+   </div>
+  </section><!-- SOLUTION -->
+  <section class="w-full py-24 px-6 relative">
+   <div class="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/[0.03] to-transparent"></div>
+   <div class="max-w-5xl mx-auto relative z-10 scroll-reveal">
+    <p class="text-center text-xs uppercase tracking-widest text-emerald-400 mb-4">The solution</p>
+    <h2 class="text-3xl md:text-5xl font-bold text-center mb-6 tracking-tight">AI-powered leads,<br><span class="gradient-text">delivered in minutes</span></h2>
+    <p class="text-center text-gray-400 max-w-xl mx-auto mb-16">LeadForge uses intelligent web scraping to find, verify, and deliver business leads tailored to exactly what you need.</p>
+    <div class="grid md:grid-cols-3 gap-8">
+     <div class="glass rounded-2xl p-8 text-center feature-card">
+      <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
+       <i data-lucide="globe" class="w-6 h-6 text-emerald-400"></i>
+      </div>
+      <h3 class="font-semibold mb-2">Real-time scraping</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">Fresh data pulled directly from the web — not recycled databases. Every lead is current and verified.</p>
+     </div>
+     <div class="glass rounded-2xl p-8 text-center feature-card">
+      <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-blue-500/10 flex items-center justify-center">
+       <i data-lucide="sliders" class="w-6 h-6 text-blue-400"></i>
+      </div>
+      <h3 class="font-semibold mb-2">Smart filtering</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">Filter by country, niche, industry, and business size to get exactly the clients you want to work with.</p>
+     </div>
+     <div class="glass rounded-2xl p-8 text-center feature-card">
+      <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-purple-500/10 flex items-center justify-center">
+       <i data-lucide="map-pin" class="w-6 h-6 text-purple-400"></i>
+      </div>
+      <h3 class="font-semibold mb-2">Region-based targeting</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">Target businesses in specific cities, states, or countries. Perfect for local agencies and geo-focused outreach.</p>
+     </div>
+    </div>
+   </div>
+  </section><!-- FEATURES -->
+  <section id="features" class="w-full py-24 px-6">
+   <div class="max-w-5xl mx-auto scroll-reveal">
+    <p class="text-center text-xs uppercase tracking-widest text-gray-500 mb-4">Features</p>
+    <h2 class="text-3xl md:text-5xl font-bold text-center mb-16 tracking-tight">Everything you need to<br>
+     fill your pipeline</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+     <div class="glass rounded-xl p-6 feature-card">
+      <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
+       <i data-lucide="filter" class="w-5 h-5 text-emerald-400"></i>
+      </div>
+      <h3 class="font-semibold text-sm mb-2">Smart Filtering</h3>
+      <p class="text-xs text-gray-500 leading-relaxed">Country, niche, business type — dial in exactly who you want to reach.</p>
+     </div>
+     <div class="glass rounded-xl p-6 feature-card">
+      <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
+       <i data-lucide="activity" class="w-5 h-5 text-blue-400"></i>
+      </div>
+      <h3 class="font-semibold text-sm mb-2">Real-Time Data</h3>
+      <p class="text-xs text-gray-500 leading-relaxed">Every scrape is live. No stale lists, no bounced emails, no wasted time.</p>
+     </div>
+     <div class="glass rounded-xl p-6 feature-card">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4">
+       <i data-lucide="file-spreadsheet" class="w-5 h-5 text-amber-400"></i>
+      </div>
+      <h3 class="font-semibold text-sm mb-2">Export to CSV</h3>
+      <p class="text-xs text-gray-500 leading-relaxed">One-click export. Plug leads directly into your CRM or email tool.</p>
+     </div>
+     <div class="glass rounded-xl p-6 feature-card">
+      <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
+       <i data-lucide="layout-dashboard" class="w-5 h-5 text-purple-400"></i>
+      </div>
+      <h3 class="font-semibold text-sm mb-2">Clean Dashboard</h3>
+      <p class="text-xs text-gray-500 leading-relaxed">A beautiful, intuitive interface that makes managing leads effortless.</p>
+     </div>
+    </div>
+   </div>
+  </section><!-- HOW IT WORKS -->
+  <section class="w-full py-24 px-6 relative">
+   <div class="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/[0.02] to-transparent"></div>
+   <div class="max-w-4xl mx-auto relative z-10 scroll-reveal">
+    <p class="text-center text-xs uppercase tracking-widest text-gray-500 mb-4">How it works</p>
+    <h2 class="text-3xl md:text-5xl font-bold text-center mb-16 tracking-tight">Three steps to your<br>
+     next client</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+     <div class="text-center">
+      <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 flex items-center justify-center border border-emerald-500/20"><span class="text-2xl font-bold text-emerald-400 font-mono">1</span>
+      </div>
+      <h3 class="font-semibold mb-2">Set your target</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">Choose the business type, industry, and country. Tell LeadForge exactly who your ideal client is.</p>
+     </div>
+     <div class="text-center">
+      <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center border border-blue-500/20"><span class="text-2xl font-bold text-blue-400 font-mono">2</span>
+      </div>
+      <h3 class="font-semibold mb-2">AI scrapes &amp; filters</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">Our engine crawls the web in real-time, pulling verified business data and scoring each lead for relevance.</p>
+     </div>
+     <div class="text-center">
+      <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center border border-purple-500/20"><span class="text-2xl font-bold text-purple-400 font-mono">3</span>
+      </div>
+      <h3 class="font-semibold mb-2">Download &amp; close</h3>
+      <p class="text-sm text-gray-500 leading-relaxed">Export your leads as a CSV or work from the dashboard. Start reaching out and closing deals today.</p>
+     </div>
+    </div>
+   </div>
+  </section><!-- DEMO PREVIEW -->
+  <section id="demo" class="w-full py-24 px-6">
+   <div class="max-w-5xl mx-auto scroll-reveal">
+    <p class="text-center text-xs uppercase tracking-widest text-gray-500 mb-4">Demo preview</p>
+    <h2 class="text-3xl md:text-5xl font-bold text-center mb-16 tracking-tight">See what a lead export<br>
+     actually looks like</h2>
+    <div class="glass rounded-2xl overflow-hidden">
+     <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+      <div class="flex items-center gap-3"><span class="text-sm font-semibold">Lead Export Preview</span> <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs">12 results</span>
+      </div><button class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition"><i data-lucide="download" class="w-3.5 h-3.5"></i> Export CSV</button>
+     </div>
+     <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+       <thead>
+        <tr class="text-left text-gray-500 text-xs uppercase tracking-wider bg-white/[0.02]">
+         <th class="px-6 py-3 font-medium">Business Name</th>
+         <th class="px-6 py-3 font-medium">Email</th>
+         <th class="px-6 py-3 font-medium">Country</th>
+         <th class="px-6 py-3 font-medium">Industry</th>
+        </tr>
+       </thead>
+       <tbody class="text-gray-300">
+        <tr class="table-row border-b border-white/[0.03]">
+         <td class="px-6 py-4 font-medium text-white">Bloom Creative Co</td>
+         <td class="px-6 py-4 font-mono text-xs text-gray-400">hey@bloomcreative.co</td>
+         <td class="px-6 py-4">🇺🇸 United States</td>
+         <td class="px-6 py-4"><span class="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-xs">Branding Agency</span></td>
+        </tr>
+        <tr class="table-row border-b border-white/[0.03]">
+         <td class="px-6 py-4 font-medium text-white">Webcraft Solutions</td>
+         <td class="px-6 py-4 font-mono text-xs text-gray-400">info@webcraft.io</td>
+         <td class="px-6 py-4">🇦🇺 Australia</td>
+         <td class="px-6 py-4"><span class="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-xs">Web Dev</span></td>
+        </tr>
+        <tr class="table-row border-b border-white/[0.03]">
+         <td class="px-6 py-4 font-medium text-white">Lumos Marketing</td>
+         <td class="px-6 py-4 font-mono text-xs text-gray-400">team@lumosmarketing.de</td>
+         <td class="px-6 py-4">🇩🇪 Germany</td>
+         <td class="px-6 py-4"><span class="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 text-xs">Marketing</span></td>
+        </tr>
+        <tr class="table-row border-b border-white/[0.03]">
+         <td class="px-6 py-4 font-medium text-white">Sidewalk Studios</td>
+         <td class="px-6 py-4 font-mono text-xs text-gray-400">hi@sidewalk.studio</td>
+         <td class="px-6 py-4">🇬🇧 United Kingdom</td>
+         <td class="px-6 py-4"><span class="px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 text-xs">Design</span></td>
+        </tr>
+        <tr class="table-row border-b border-white/[0.03]">
+         <td class="px-6 py-4 font-medium text-white">Elevate Digital Inc</td>
+         <td class="px-6 py-4 font-mono text-xs text-gray-400">contact@elevatedigital.ca</td>
+         <td class="px-6 py-4">🇨🇦 Canada</td>
+         <td class="px-6 py-4"><span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs">SEO Agency</span></td>
+        </tr>
+        <tr class="table-row">
+         <td class="px-6 py-4 font-medium text-white">Vantage Growth</td>
+         <td class="px-6 py-4 font-mono text-xs text-gray-400">hello@vantagegrowth.nl</td>
+         <td class="px-6 py-4">🇳🇱 Netherlands</td>
+         <td class="px-6 py-4"><span class="px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 text-xs">Growth Agency</span></td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+  </section><!-- PRICING -->
+  <section id="pricing" class="w-full py-24 px-6">
+   <div class="max-w-5xl mx-auto scroll-reveal">
+    <p class="text-center text-xs uppercase tracking-widest text-gray-500 mb-4">Pricing</p>
+    <h2 class="text-3xl md:text-5xl font-bold text-center mb-6 tracking-tight">Simple pricing,<br>
+     serious results</h2>
+    <p class="text-center text-gray-400 max-w-md mx-auto mb-16">Start free. Upgrade when you're ready. No hidden fees, cancel anytime.</p>
+    <div class="grid md:grid-cols-3 gap-6"><!-- Starter -->
+     <div class="glass rounded-2xl p-8 pricing-card">
+      <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-1">Starter</h3>
+      <div class="flex items-baseline gap-1 mb-6">
+       <span id="price-starter" class="text-4xl font-bold">$29</span><span class="text-gray-500 text-sm">/month</span>
+      </div>
+      <ul class="space-y-3 mb-8 text-sm text-gray-400">
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> 200 leads/month</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> 3 country filters</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> CSV export</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Email support</li>
+      </ul><button class="w-full py-3 rounded-full border border-white/10 text-sm font-semibold hover:bg-white/5 transition">Get Started</button>
+     </div><!-- Pro -->
+     <div class="pricing-popular rounded-2xl p-8 pricing-card bg-gradient-to-b from-emerald-500/[0.06] to-transparent relative">
+      <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-emerald-500 text-xs font-bold text-black">
+       Most Popular
+      </div>
+      <h3 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-1">Pro</h3>
+      <div class="flex items-baseline gap-1 mb-6">
+       <span id="price-pro" class="text-4xl font-bold">$79</span><span class="text-gray-500 text-sm">/month</span>
+      </div>
+      <ul class="space-y-3 mb-8 text-sm text-gray-300">
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> 1,000 leads/month</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Unlimited filters</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Lead scoring</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Priority support</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> API access</li>
+      </ul><button class="w-full py-3 rounded-full btn-primary text-sm font-semibold text-white">Get Started</button>
+     </div><!-- Agency -->
+     <div class="glass rounded-2xl p-8 pricing-card">
+      <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-1">Agency</h3>
+      <div class="flex items-baseline gap-1 mb-6">
+       <span id="price-agency" class="text-4xl font-bold">$199</span><span class="text-gray-500 text-sm">/month</span>
+      </div>
+      <ul class="space-y-3 mb-8 text-sm text-gray-400">
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> 5,000 leads/month</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Team access (5 seats)</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> White-label exports</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Dedicated account manager</li>
+       <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i> Custom integrations</li>
+      </ul><button class="w-full py-3 rounded-full border border-white/10 text-sm font-semibold hover:bg-white/5 transition">Contact Sales</button>
+     </div>
+    </div>
+   </div>
+  </section><!-- FINAL CTA -->
+  <section class="w-full py-24 px-6 relative">
+   <div class="absolute inset-0 bg-gradient-to-t from-emerald-500/[0.05] to-transparent"></div>
+   <div class="max-w-3xl mx-auto relative z-10 text-center scroll-reveal">
+    <h2 id="final-cta-heading" class="text-3xl md:text-5xl font-bold mb-6 tracking-tight">Your next client is already<br>
+     out there. <span class="gradient-text">Go find them.</span></h2>
+    <p class="text-gray-400 max-w-lg mx-auto mb-10">Join 2,400+ freelancers and agencies who use LeadForge to fill their pipeline every single week.</p><button id="final-cta-btn" class="btn-primary px-10 py-4 rounded-full text-white font-semibold text-lg">Start Getting Clients Today</button>
+    <p class="text-xs text-gray-500 mt-4">Free 7-day trial · No credit card required</p>
+   </div>
+  </section><!-- FOOTER -->
+  <footer class="w-full py-12 px-6 border-t border-white/5">
+   <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="flex items-center gap-2">
+     <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center">
+      <i data-lucide="zap" class="w-3.5 h-3.5 text-white"></i>
+     </div><span class="font-bold text-sm">LeadForge AI</span>
+    </div>
+    <div class="flex items-center gap-8 text-sm text-gray-500"><a href="#" class="hover:text-white transition">About</a> <a href="#" class="hover:text-white transition">Contact</a> <a href="#" class="hover:text-white transition">Privacy Policy</a>
+    </div>
+    <div class="flex items-center gap-4 text-gray-500"><a href="#" class="hover:text-white transition"><i data-lucide="twitter" class="w-4 h-4"></i></a> <a href="#" class="hover:text-white transition"><i data-lucide="linkedin" class="w-4 h-4"></i></a> <a href="#" class="hover:text-white transition"><i data-lucide="github" class="w-4 h-4"></i></a>
+    </div>
+   </div>
+   <p class="text-center text-xs text-gray-600 mt-8">© 2024 LeadForge AI. All rights reserved.</p>
+  </footer>
+  <script>
+const defaultConfig = {
+  // Colors (5 max)
+  background_color: '#090a0f',
+  surface_color: '#0d0f16',
+  text_color: '#ffffff',
+  primary_action_color: '#10b981',
+  secondary_action_color: '#3b82f6',
+  // Font
+  font_family: 'Instrument Sans',
+  font_size: 16,
+  // Text
+  hero_headline: 'Stop hunting for clients. Let AI find them.',
+  hero_subheadline: 'LeadForge scrapes real-time business data, filters by niche and location, and delivers verified leads straight to your dashboard.',
+  cta_primary: 'Start Finding Leads',
+  cta_secondary: 'View Sample Leads',
+  starter_price: '$29',
+  pro_price: '$79',
+  agency_price: '$199',
+  final_cta_text: 'Your next client is already out there. Go find them.'
+};
+
+async function onConfigChange(config) {
+  const c = config;
+  const bg = c.background_color || defaultConfig.background_color;
+  const surface = c.surface_color || defaultConfig.surface_color;
+  const text = c.text_color || defaultConfig.text_color;
+  const primary = c.primary_action_color || defaultConfig.primary_action_color;
+  const secondary = c.secondary_action_color || defaultConfig.secondary_action_color;
+  const font = c.font_family || defaultConfig.font_family;
+  const size = c.font_size || defaultConfig.font_size;
+
+  document.body.style.backgroundColor = bg;
+  document.body.style.color = text;
+  document.body.style.fontFamily = `${font}, Instrument Sans, sans-serif`;
+  document.body.style.fontSize = `${size}px`;
+
+  // Primary buttons
+  document.querySelectorAll('.btn-primary').forEach(el => {
+    el.style.background = `linear-gradient(135deg, ${primary}, ${primary}dd)`;
+    el.style.boxShadow = `0 4px 20px ${primary}4d`;
+  });
+
+  // Gradient text
+  document.querySelectorAll('.gradient-text').forEach(el => {
+    el.style.background = `linear-gradient(135deg, ${primary}, ${secondary}, #a78bfa)`;
+    el.style.webkitBackgroundClip = 'text';
+    el.style.webkitTextFillColor = 'transparent';
+    el.style.backgroundClip = 'text';
+  });
+
+  // Text content
+  const headline = document.getElementById('hero-headline');
+  if (headline) {
+    const parts = (c.hero_headline || defaultConfig.hero_headline).split('.');
+    headline.innerHTML = parts[0] + '.<br><span class="gradient-text">' + (parts[1] || '') + '</span>';
+    headline.querySelectorAll('.gradient-text').forEach(el => {
+      el.style.background = `linear-gradient(135deg, ${primary}, ${secondary}, #a78bfa)`;
+      el.style.webkitBackgroundClip = 'text';
+      el.style.webkitTextFillColor = 'transparent';
+      el.style.backgroundClip = 'text';
+    });
+  }
+
+  const sub = document.getElementById('hero-subheadline');
+  if (sub) sub.textContent = c.hero_subheadline || defaultConfig.hero_subheadline;
+
+  const ctaP = document.getElementById('hero-cta-primary');
+  if (ctaP) ctaP.textContent = c.cta_primary || defaultConfig.cta_primary;
+
+  const ctaS = document.getElementById('hero-cta-secondary');
+  if (ctaS) ctaS.innerHTML = `<i data-lucide="play" class="w-4 h-4"></i> ${c.cta_secondary || defaultConfig.cta_secondary}`;
+
+  const ps = document.getElementById('price-starter');
+  if (ps) ps.textContent = c.starter_price || defaultConfig.starter_price;
+  const pp = document.getElementById('price-pro');
+  if (pp) pp.textContent = c.pro_price || defaultConfig.pro_price;
+  const pa = document.getElementById('price-agency');
+  if (pa) pa.textContent = c.agency_price || defaultConfig.agency_price;
+
+  const fh = document.getElementById('final-cta-heading');
+  if (fh) {
+    const ft = c.final_cta_text || defaultConfig.final_cta_text;
+    const fparts = ft.split('.');
+    fh.innerHTML = fparts[0] + '.<br><span class="gradient-text">' + (fparts[1] || '') + '</span>';
+    fh.querySelectorAll('.gradient-text').forEach(el => {
+      el.style.background = `linear-gradient(135deg, ${primary}, ${secondary}, #a78bfa)`;
+      el.style.webkitBackgroundClip = 'text';
+      el.style.webkitTextFillColor = 'transparent';
+      el.style.backgroundClip = 'text';
+    });
+  }
+
+  // Font sizing
+  document.querySelectorAll('h1').forEach(el => el.style.fontSize = `${size * 3.5}px`);
+  document.querySelectorAll('h2').forEach(el => el.style.fontSize = `${size * 2.5}px`);
+  document.querySelectorAll('h3').forEach(el => el.style.fontSize = `${size * 1.1}px`);
+
+  lucide.createIcons();
+}
+
+function mapToCapabilities(config) {
+  const c = config;
+  function mut(key) {
+    return {
+      get: () => c[key] || defaultConfig[key],
+      set: (v) => { c[key] = v; window.elementSdk.setConfig({ [key]: v }); }
+    };
+  }
+  return {
+    recolorables: [mut('background_color'), mut('surface_color'), mut('text_color'), mut('primary_action_color'), mut('secondary_action_color')],
+    borderables: [],
+    fontEditable: mut('font_family'),
+    fontSizeable: mut('font_size')
+  };
+}
+
+function mapToEditPanelValues(config) {
+  const c = config;
+  return new Map([
+    ['hero_headline', c.hero_headline || defaultConfig.hero_headline],
+    ['hero_subheadline', c.hero_subheadline || defaultConfig.hero_subheadline],
+    ['cta_primary', c.cta_primary || defaultConfig.cta_primary],
+    ['cta_secondary', c.cta_secondary || defaultConfig.cta_secondary],
+    ['starter_price', c.starter_price || defaultConfig.starter_price],
+    ['pro_price', c.pro_price || defaultConfig.pro_price],
+    ['agency_price', c.agency_price || defaultConfig.agency_price],
+    ['final_cta_text', c.final_cta_text || defaultConfig.final_cta_text]
+  ]);
+}
+
+// Init SDK
+window.elementSdk.init({ defaultConfig, onConfigChange, mapToCapabilities, mapToEditPanelValues });
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e787e54f45121f2',t:'MTc3NTM5MTQ4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
